@@ -2,6 +2,11 @@ using UnityEngine;
 
 public class PlayerBehavior : MonoBehaviour
 {
+    public int capacity;
+    public int diceRoll;
+    public string item;
+
+
     public GameObject startBtn;
     public GameObject rollDiceBtn;
 
@@ -9,13 +14,13 @@ public class PlayerBehavior : MonoBehaviour
     {
         startBtn.SetActive(false);
         rollDiceBtn.SetActive(true);
-        BattleManager.instance.StartGame();
+        BattleManager.Instance.StartGame();
     }
 
     public void RollDice()
     {
         int playerDiceRoll = Random.Range(1, 7) * 10;
-        BattleManager.instance.SetPlayerDR(playerDiceRoll);
+        BattleManager.Instance.SetPlayerDR(playerDiceRoll);
         Debug.Log("Player rolled: " + playerDiceRoll);
     }
 
