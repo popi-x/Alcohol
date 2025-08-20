@@ -13,9 +13,14 @@ public class BattleManager : MonoBehaviour
 
     public enum State
     {
+        PreRequisites,
         RollDice,
-        Drink
+        UseItems,
+        UseSkills,
+        Decision,
+        Result
     }
+
     public static BattleManager instance;
     public EnemyBehavior enemy; // Reference to the enemy behavior script
     public PlayerBehavior player; // Reference to the player behavior script
