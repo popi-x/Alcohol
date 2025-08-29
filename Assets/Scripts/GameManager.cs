@@ -9,7 +9,7 @@ public class GameManager : MonoBehaviour
         Battle,
         Shop
     }
-
+    public GameState curState { get; } = GameState.Battle;
     public void Awake()
     {
         if (instance == null)
@@ -20,5 +20,6 @@ public class GameManager : MonoBehaviour
         {
             Destroy(gameObject);
         }
+        
     }
 }
