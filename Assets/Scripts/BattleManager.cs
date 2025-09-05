@@ -1,15 +1,20 @@
+using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using UnityEngine;
+using System.Collections.Generic;
+  
 
 public class BattleManager : MonoBehaviour
 {
     private int playerDiceRoll;
     private int enemyDiceRoll;
     private int alcoholAmount;
-    private bool playerTurn = true; // player always starts first i.e. enemy is the first one to drink
+    private bool playerTurn = false; // player always starts first i.e. enemy is the first one to drink
     private State curState;
     private int maxSkillNum = 3;
-    private int curSkillNum = 0; 
+    private int curSkillNum = 0;
+    private List<UserItem> playerItemSet = new List<UserItem>();
+    private List<UserItem> usedItems = new List<UserItem>(); // to store player's used items in a turn
 
     public enum State
     {
@@ -25,7 +30,8 @@ public class BattleManager : MonoBehaviour
 
     public Enemy enemy; // Reference to the enemy behavior script
     public Player player; // Reference to the player behavior script
-    public Alchohol alchohol; // Reference to the alchohol behavior script
+    // Reference to the alchohol behavior script
+    public Alcohol alcohol;
 
     public void Awake()
     {
@@ -79,15 +85,15 @@ public class BattleManager : MonoBehaviour
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
                         //??how to let UseItemToAlchohol know who's using items??
-                        UseItemToAlchohol(1);
+                        usedItems.Add(playerItemSet[0]);
                     }
                     else if (Input.GetKeyDown(KeyCode.W))
                     {
-                        UseItemToAlchohol(2);
+                        usedItems.Add(playerItemSet[1]);
                     }
                     else if (Input.GetKeyDown(KeyCode.E))
                     {
-                        UseItemToAlchohol(3);
+                        usedItems.Add(playerItemSet[2]);
                     }
                     else if (Input.GetKeyDown(KeyCode.R))
                     {
@@ -97,6 +103,7 @@ public class BattleManager : MonoBehaviour
                 else
                 {
                    UseItemToAlchohol(1); // enemy uses item 1 for now 
+                    Debug.Log("Enemy uses item 1");
                    curState = State.UseSkills; // move to next state
                 }
                 
@@ -132,6 +139,7 @@ public class BattleManager : MonoBehaviour
                 else
                 {
                     UseSkill(1); // enemy uses skill  1 for now
+                    Debug.Log("Enemy uses skill 1");
                     curState = State.Decision; // move to next state
                 }
                 break;
@@ -158,6 +166,7 @@ public class BattleManager : MonoBehaviour
                 }
                     break;
             case State.Result:
+                CalculateDamageResult();
                 Debug.Log("Calculating Result");
                 playerTurn = !playerTurn; // switch turn
                 curState = State.RollDice;
@@ -190,7 +199,6 @@ public class BattleManager : MonoBehaviour
         // return a sum
         // alchohol's damage
         alcoholAmount = playerDiceRoll + enemyDiceRoll;
-        Debug.Log("Total alcohol damage: " + alcoholAmount);
     }
 
     void UseItemToAlchohol(int index)
@@ -252,7 +260,22 @@ public class BattleManager : MonoBehaviour
 
     void CalculateDamageResult()
     {
-        return;
+        if (playerTurn)
+        {
+            foreach (var item in usedItems)
+            {
+                item.Use();
+            }
+            if (enemy.delayedEffectTurns == 0)
+            {
+                enemy.cap += enemy.pendingDamage;
+            }
+            else
+            {
+                if 
+            }
+
+        }
     }
 
     void CheckEntityHP()
