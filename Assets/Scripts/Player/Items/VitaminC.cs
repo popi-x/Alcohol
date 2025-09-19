@@ -1,5 +1,8 @@
 using UnityEngine;
 
+
+
+[CreateAssetMenu(fileName = "Vitamin C", menuName = "Items/Vitamin C")]
 public class VitaminC : UserItem
 {
     public string itemName = "Vitamin C";
@@ -8,7 +11,7 @@ public class VitaminC : UserItem
 
     
 
-    public override void Use()
+    public override void Use(Enemy enemy)
     {
         enemy.pendingDamage += icmt;
     }

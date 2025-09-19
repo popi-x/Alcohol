@@ -3,20 +3,7 @@ using NUnit.Framework.Constraints;
 using UnityEngine;
 using System.Collections.Generic;
   
-
-public class BattleManager : MonoBehaviour
-{
-    private int playerDiceRoll;
-    private int enemyDiceRoll;
-    private int alcoholAmount;
-    private bool playerTurn = false; // player always starts first i.e. enemy is the first one to drink
-    private State curState;
-    private int maxSkillNum = 3;
-    private int curSkillNum = 0;
-    private List<UserItem> playerItemSet = new List<UserItem>();
-    private List<UserItem> usedItems = new List<UserItem>(); // to store player's used items in a turn
-
-    public enum State
+public enum battleState
     {
         PreRequisites,
         RollDice,
@@ -25,13 +12,35 @@ public class BattleManager : MonoBehaviour
         Decision,
         Result
     }
-    public static BattleManager Instance { get { return _instance; } private set { } }
+
+public class BattleManager : MonoBehaviour
+{
+    private int playerDiceRoll;
+    private int enemyDiceRoll;
+    private int alcoholAmount;
+    private int maxSkillNum = 3;
+    private int curSkillNum = 0;
+    private List<UserItem> playerItemSet = new List<UserItem>(); //Reset
+    private List<UserItem> usedItems = new List<UserItem>(); // to store player's used items in a turn;Reset
+
+    
+    public static BattleManager instance { get { return _instance; } private set { } }
     private static BattleManager _instance;
 
     public Enemy enemy; // Reference to the enemy behavior script
     public Player player; // Reference to the player behavior script
     // Reference to the alchohol behavior script
-    public Alcohol alcohol;
+    public Alcohol alcohol; 
+    public battleState curState;
+    public bool playerTurn = false; // player always starts first i.e. enemy is the first one to drink
+
+
+    public void Reset()
+    {
+        usedItems.Clear();
+        playerItemSet.Clear();
+    }
+
 
     public void Awake()
     {
@@ -43,8 +52,13 @@ public class BattleManager : MonoBehaviour
         {
             Destroy(_instance);
         }
-        curState = State.PreRequisites;
+        curState = battleState.PreRequisites;
 
+    }
+
+    public void Start()
+    {
+        playerItemSet = player.itemSet;
     }
 
     private void Update()
@@ -53,16 +67,19 @@ public class BattleManager : MonoBehaviour
 
         switch (curState)
         {
-            case State.PreRequisites:
+            case battleState.PreRequisites:
                 if (Input.GetKeyDown(KeyCode.Alpha1))
                 {
                     Debug.Log("Check Prerequisites");
                     CheckPrerequisite();
                 }
                 break;
-            case State.RollDice:
+            case battleState.RollDice:
                 if (Input.GetKeyDown(KeyCode.Alpha2))
                 {
+                    //first check if any entity's debuff or buff takes effect at the start of turn
+                    
+                    enemy.ApplyStartOfTurnEffects();
                     Debug.Log("Roll Dice");
                     enemyDiceRoll = RollaDice();
                     enemy.diceRoll = enemyDiceRoll;
@@ -75,41 +92,54 @@ public class BattleManager : MonoBehaviour
                     Debug.Log("Enemy rolled: " + enemyDiceRoll);
                     Debug.Log("Player rolled: " + playerDiceRoll);
                     Debug.Log("Total alcohol damage: " + alcoholAmount);
-                    curState = State.UseItems;
+                    curState = battleState.UseItems;
                 }
                 break;
 
-            case State.UseItems:
-                if (playerTurn)
+            case battleState.UseItems:
+                string msg = !playerTurn ? "Player's turn to use items" : "Enemy's turn to use items";
+                if (Input.GetKeyDown(KeyCode.M))
+                {
+                    Debug.Log(msg);
+                }
+
+                if (!playerTurn)
                 {
                     if (Input.GetKeyDown(KeyCode.Q))
                     {
-                        //??how to let UseItemToAlchohol know who's using items??
                         usedItems.Add(playerItemSet[0]);
+                        Debug.Log("Player uses item 1");
                     }
                     else if (Input.GetKeyDown(KeyCode.W))
                     {
                         usedItems.Add(playerItemSet[1]);
+                        Debug.Log("Player uses item 2");
                     }
                     else if (Input.GetKeyDown(KeyCode.E))
                     {
                         usedItems.Add(playerItemSet[2]);
+                        Debug.Log("Player uses item 3");
                     }
-                    else if (Input.GetKeyDown(KeyCode.R))
+                    else if (Input.GetKeyDown(KeyCode.N))
                     {
-                        curState = State.UseSkills; // move to next state
+                        curState = battleState.UseSkills; // move to next state
                     }
                 }
                 else
                 {
-                   UseItemToAlchohol(1); // enemy uses item 1 for now 
                     Debug.Log("Enemy uses item 1");
-                   curState = State.UseSkills; // move to next state
+                   curState = battleState.UseSkills; // move to next state
                 }
                 
                 break;
 
-            case State.UseSkills:
+            case battleState.UseSkills:
+                msg = !playerTurn ? "Enemy's turn to use skills" : "Player's turn to use skills";
+                if (Input.GetKeyDown(KeyCode.M))
+                {
+                    Debug.Log(msg);
+                }
+
                 if (playerTurn && curSkillNum != maxSkillNum)
                 {
                     if (Input.GetKeyDown(KeyCode.A))
@@ -127,49 +157,52 @@ public class BattleManager : MonoBehaviour
                         UseSkill(3);
                         curSkillNum++;
                     }
-                    else if (Input.GetKeyDown(KeyCode.R))
+                    else if (Input.GetKeyDown(KeyCode.N))
                     {
-                        curState = State.Decision; // move to next state
+                        curState = battleState.Decision; // move to next state
                     }
                 }
                 else if (playerTurn && curSkillNum == maxSkillNum)
                 {
-                    curState = State.Decision; // move to next state
+                    curState = battleState.Decision; // move to next state
                 }
                 else
                 {
                     UseSkill(1); // enemy uses skill  1 for now
                     Debug.Log("Enemy uses skill 1");
-                    curState = State.Decision; // move to next state
+                    curState = battleState.Decision; // move to next state
                 }
                 break;
                 
 
-            case State.Decision:
+            case battleState.Decision:
+                msg = !playerTurn ? "Enemy's turn to decide" : "Player's turn to decide";
+                if (Input.GetKeyDown(KeyCode.M))
+                {
+                    Debug.Log(msg);
+                }
                 if (playerTurn)
                 {
                     if (Input.GetKeyDown(KeyCode.Y))
                     {
                         MakeADecision(true);
-                        curState = State.Result;
+                        curState = battleState.Result;
                     }
                     else if (Input.GetKeyDown(KeyCode.N))
                     {
                         MakeADecision(false);
-                        curState = State.Result;
+                        curState = battleState.Result;
                     }
                 }
                 else
                 {
                     MakeADecision(true);
-                    curState = State.Result;
+                    curState = battleState.Result;
                 }
                     break;
-            case State.Result:
-                CalculateDamageResult();
-                Debug.Log("Calculating Result");
+            case battleState.Result:
                 playerTurn = !playerTurn; // switch turn
-                curState = State.RollDice;
+                curState = battleState.RollDice;
 
                 break;
             
@@ -178,13 +211,67 @@ public class BattleManager : MonoBehaviour
         }
     }
 
+    
+
+
+    /* public void UpdateState(battleState newState)
+     {
+         curState = newState;
+
+         switch(curState)
+         {
+             case battleState.PreRequisites:
+                 CheckPrerequisite();
+                 UpdateState(battleState.RollDice);
+                 break;
+
+             case battleState.RollDice:
+                 Debug.Log("Roll Dice");
+                 enemyDiceRoll = RollaDice();
+                 enemy.diceRoll = enemyDiceRoll;
+
+                 playerDiceRoll = RollaDice();
+                 player.diceRoll = playerDiceRoll;
+
+                 SumUpDiceResult();
+
+                 Debug.Log("Enemy rolled: " + enemyDiceRoll);
+                 Debug.Log("Player rolled: " + playerDiceRoll);
+                 Debug.Log("Total alcohol damage: " + alcoholAmount);
+                 UpdateState(battleState.UseItems);
+                 break;
+
+             case battleState.UseItems:
+                 UseItems();
+                 UpdateState(battleState.UseSkills);
+                 break;
+
+             case battleState.UseSkills:
+                 UseSkills();
+                 UpdateState(battleState.Decision);
+                 break;
+
+             case battleState.Decision:
+                 MakeDeicision();
+                 UpdateState(battleState.Result);
+
+             case battleState.Result:
+                 CalculateDamageResult();
+                 Debug.Log("Calculating Result");
+                 playerTurn = !playerTurn; // switch turn
+                 UpdateState(battleState.RollDice);
+                 break;
+         }
+
+     }*/
+
+
+
     void CheckPrerequisite()
     {
         // check if player has something enemy needs
-        // true
         // tips - change state
-        curState = State.RollDice;
-        // false
+        curState = battleState.RollDice;
     }
 
     int RollaDice()
@@ -201,15 +288,11 @@ public class BattleManager : MonoBehaviour
         alcoholAmount = playerDiceRoll + enemyDiceRoll;
     }
 
-    void UseItemToAlchohol(int index)
-    {
-       Debug.Log("uses item" + index);  
-    }
+    
 
 
     void UseSkill(int index)
     {
-        // get a defense
         Debug.Log("uses skill" + index);
 
     }
@@ -258,31 +341,36 @@ public class BattleManager : MonoBehaviour
         }
     }
 
-    void CalculateDamageResult()
-    {
-        if (playerTurn)
-        {
-            foreach (var item in usedItems)
-            {
-                item.Use();
-            }
-            if (enemy.delayedEffectTurns == 0)
-            {
-                enemy.cap += enemy.pendingDamage;
-            }
-            else
-            {
-                if 
-            }
-
-        }
-    }
+    
 
     void CheckEntityHP()
     {
         // check if proceed or loop
     }
 
+
+    private void CalculateDamageResult() //only called when the entity chooses to drink
+    {
+        var alcoholDmg = alcoholAmount * alcohol.conversion;
+
+        //check who's turn 
+        if (!playerTurn) //enemy's turn to drinK
+        {
+            enemy.pendingDamage += alcoholDmg;
+            foreach (UserItem item in usedItems)
+            {
+                item.Use(enemy);
+            }
+            enemy.ApplyDamage();
+            Debug.Log("enemy's cap: " + enemy.cap);
+        }
+        else
+        {
+            player.ApplyDamage();
+            Debug.Log("player's cap: " + player.cap);
+        }
+
+    }
     
 
 

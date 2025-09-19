@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public abstract class UserItem: MonoBehaviour
+public abstract class UserItem: ScriptableObject
 {
     public Enemy enemy;
 
@@ -9,5 +9,5 @@ public abstract class UserItem: MonoBehaviour
         enemy = GameObject.Find("Enemy").GetComponent<Enemy>();
     }
 
-    public abstract void Use();  
+    public abstract void Use(Enemy enemy);  
 }

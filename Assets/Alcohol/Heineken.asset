@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2fce825ab18c26945885eabab46d00db, type: 3}
   m_Name: Heineken
   m_EditorClassIdentifier: 
-  conversion: 0.5
+  conversion: 0.1
   type: {fileID: 11400000, guid: ff186a37809968f4ba2af96541c31bcc, type: 2}

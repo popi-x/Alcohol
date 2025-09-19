@@ -1,5 +1,6 @@
 using UnityEngine;
 
+[CreateAssetMenu(fileName = "DE Bomb", menuName = "Items/DE Bomb")]
 public class DEBomb : UserItem
 {
     public string itemName = "Delayed Effect Bomb";
@@ -8,10 +9,23 @@ public class DEBomb : UserItem
 
     
 
-    public override void Use()
+    public override void Use(Enemy enemy)
     {
-        enemy.delayedEffectTurns += DETurns;
-        enemy.delayedEffectMtpler = DEMtpler;
-        
+        if (enemy.DEHandler == null) {
+            Debug.LogError("Enemy does not have a DEHandler component.");
+        }
+        else
+        {
+            if (enemy.DEHandler.curState == DEHandler.DEState.Inactive)
+            {
+                enemy.DEHandler.Init(enemy, DETurns, DEMtpler);
+                enemy.DEHandler.curState = DEHandler.DEState.Active;
+            }
+            else
+            {
+                enemy.DEHandler.remainingTurns += DETurns;
+            }
+        }
+
     } 
 }

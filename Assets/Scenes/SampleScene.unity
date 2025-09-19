@@ -487,6 +487,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemy: {fileID: 1600954247}
   player: {fileID: 1233381897}
+  alcohol: {fileID: 11400000, guid: 58eead1c8bbc56345a62e7fa19bb3ee2, type: 2}
+  curState: 0
+  playerTurn: 0
 --- !u!4 &808369574
 Transform:
   m_ObjectHideFlags: 0
@@ -595,6 +598,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 02d03560e5a20294f969b6f6ac5f39af, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  diceRoll: 0
+  cap: 0
+  maxCap: 800
+  itemSet:
+  - {fileID: 11400000, guid: c69b1f3826f2cfd419d5bd273b138003, type: 2}
+  - {fileID: 11400000, guid: b62e4de2dcc3a3c4194b5c28881a3801, type: 2}
+  - {fileID: 11400000, guid: d7695ef6a0c218f4381041a1613fd967, type: 2}
 --- !u!1 &1359504254
 GameObject:
   m_ObjectHideFlags: 0
@@ -649,6 +659,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1600954246}
   - component: {fileID: 1600954247}
+  - component: {fileID: 1600954248}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -683,6 +694,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9b76d57eee35d694a8c9c85d4ba76761, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  diceRoll: 0
+  cap: 0
+  maxCap: 1000
+  pendingDamage: 0
+  DEHandler: {fileID: 0}
+--- !u!114 &1600954248
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1600954244}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7a6a3da90afb24e408890562c54a615e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  curState: 0
+  remainingTurns: -1
+  damageSum: 0
+  multiplier: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
