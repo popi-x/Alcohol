@@ -6,23 +6,25 @@ public class Enemy : MonoBehaviour
     //激进程度int
     public int diceRoll;
     public float cap = 0f;
-    public float maxCap = 100;
+    public float maxCap = 800f;
+
     public bool lastConsent { get; set; } = false;
-    public List<string> skillSets { get; set; } = new List<string>() { "skill1", "skill2", "skill3" }; //temp
+    public List<string> skillSets = new List<string>() { "skill1", "skill2", "skill3" }; //temp
     //Items
-    public List<string> itemSets { get; set; } = new List<string>() { "item1", "item2", "item3" }; //temp 
+    public List<string> itemSets = new List<string>() { "item1", "item2", "item3" }; //temp 
 
     public float pendingDamage = 0f; //All damage to be applied
 
     //Delayed Effect will start in x turns. First check if it's triggered, and then add turns number from the item after effect is triggered
     public DEHandler DEHandler;
+    public Inventory inventory = new Inventory();
 
     //Todo: Battle sequence
     //public void 
 
     public void Awake()
     {
-        DEHandler = gameObject.AddComponent<DEHandler>();
+        DEHandler = new DEHandler();
     }
 
 
@@ -34,15 +36,16 @@ public class Enemy : MonoBehaviour
         }
         else if (DEHandler.curState == DEHandler.DEState.Active)
         {
-            if (BattleManager.instance.playerTurn)
+            if (!BattleManager.instance.playerTurn)
             {
-                DEHandler.Execute(true);
+                DEHandler.Execute(keepTurn: true);
             }
             else
             {
                 DEHandler.Execute(); //true indicates start of turn call
             }
         }
+        Debug.Log("DE turns remaining: " + DEHandler.remainingTurns);
         cap += pendingDamage;
         pendingDamage = 0f;
     }
@@ -59,6 +62,7 @@ public class Enemy : MonoBehaviour
         {
             DEHandler.Execute();
         }
+        Debug.Log("DE turns remaining: " + DEHandler.remainingTurns);
         cap += pendingDamage;
         pendingDamage = 0f;
 

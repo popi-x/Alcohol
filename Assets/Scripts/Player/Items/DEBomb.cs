@@ -1,10 +1,9 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DE Bomb", menuName = "Items/DE Bomb")]
-public class DEBomb : UserItem
+[CreateAssetMenu(fileName = "DE Bomb", menuName = "User Items/DE Bomb")]
+public class DEBomb : PlayerItem
 {
-    public string itemName = "Delayed Effect Bomb";
-    public int DETurns = 2; //Starts in 2 turns, i.e. from current turn + 2
+    public int DETurns = 3; //Starts in 3 turns, i.e. from current turn + 3
     public int DEMtpler = 3;
 
     

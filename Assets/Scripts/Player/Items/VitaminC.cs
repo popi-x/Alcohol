@@ -2,12 +2,10 @@ using UnityEngine;
 
 
 
-[CreateAssetMenu(fileName = "Vitamin C", menuName = "Items/Vitamin C")]
-public class VitaminC : UserItem
+[CreateAssetMenu(fileName = "Vitamin C", menuName = "User Items/Vitamin C")]
+public class VitaminC : PlayerItem
 {
-    public string itemName = "Vitamin C";
-    public int icmt = 7;
-
+     public int icmt = 7;
 
     
 

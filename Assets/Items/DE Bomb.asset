@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   enemy: {fileID: 0}
   itemName: Delayed Effect Bomb
-  DETurns: 2
+  DETurns: 3
   DEMtpler: 3

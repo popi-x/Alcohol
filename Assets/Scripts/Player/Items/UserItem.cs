@@ -1,6 +1,7 @@
+using UnityEditor;
 using UnityEngine;
 
-public abstract class UserItem: ScriptableObject
+public abstract class PlayerItem: BaseItem
 {
     public Enemy enemy;
 

@@ -20,19 +20,20 @@ public class BattleManager : MonoBehaviour
     private int alcoholAmount;
     private int maxSkillNum = 3;
     private int curSkillNum = 0;
-    private List<UserItem> playerItemSet = new List<UserItem>(); //Reset
-    private List<UserItem> usedItems = new List<UserItem>(); // to store player's used items in a turn;Reset
-
-    
-    public static BattleManager instance { get { return _instance; } private set { } }
+    private List<PlayerItem> playerItemSet = new List<PlayerItem>(); //Reset
+    private List<PlayerItem> usedItems = new List<PlayerItem>(); // to store player's used items in a turn;Reset
     private static BattleManager _instance;
+    private int turnCnt = 0;
+
+        
+    public static BattleManager instance { get { return _instance; } private set { } }
 
     public Enemy enemy; // Reference to the enemy behavior script
     public Player player; // Reference to the player behavior script
     // Reference to the alchohol behavior script
     public Alcohol alcohol; 
     public battleState curState;
-    public bool playerTurn = false; // player always starts first i.e. enemy is the first one to drink
+    public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
 
 
     public void Reset()
@@ -68,18 +69,23 @@ public class BattleManager : MonoBehaviour
         switch (curState)
         {
             case battleState.PreRequisites:
-                if (Input.GetKeyDown(KeyCode.Alpha1))
+                if (Input.GetKeyDown(KeyCode.N))
                 {
                     Debug.Log("Check Prerequisites");
                     CheckPrerequisite();
                 }
                 break;
             case battleState.RollDice:
-                if (Input.GetKeyDown(KeyCode.Alpha2))
+                if (Input.GetKeyDown(KeyCode.N))
                 {
+                    turnCnt++;
+                    Debug.Log("Turn " + turnCnt);
                     //first check if any entity's debuff or buff takes effect at the start of turn
                     
                     enemy.ApplyStartOfTurnEffects();
+                    Debug.Log("Enemy's cap after start of turn effects: " + enemy.cap);
+
+
                     Debug.Log("Roll Dice");
                     enemyDiceRoll = RollaDice();
                     enemy.diceRoll = enemyDiceRoll;
@@ -357,7 +363,7 @@ public class BattleManager : MonoBehaviour
         if (!playerTurn) //enemy's turn to drinK
         {
             enemy.pendingDamage += alcoholDmg;
-            foreach (UserItem item in usedItems)
+            foreach (PlayerItem item in usedItems)
             {
                 item.Use(enemy);
             }
@@ -367,8 +373,10 @@ public class BattleManager : MonoBehaviour
         else
         {
             player.ApplyDamage();
-            Debug.Log("player's cap: " + player.cap);
+            //Debug.Log("player's cap: " + player.cap);
         }
+
+        usedItems.Clear();
 
     }
     

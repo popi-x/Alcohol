@@ -601,6 +601,7 @@ MonoBehaviour:
   diceRoll: 0
   cap: 0
   maxCap: 800
+  money: 0
   itemSet:
   - {fileID: 11400000, guid: c69b1f3826f2cfd419d5bd273b138003, type: 2}
   - {fileID: 11400000, guid: b62e4de2dcc3a3c4194b5c28881a3801, type: 2}
@@ -659,7 +660,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1600954246}
   - component: {fileID: 1600954247}
-  - component: {fileID: 1600954248}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -697,24 +697,15 @@ MonoBehaviour:
   diceRoll: 0
   cap: 0
   maxCap: 1000
+  skillSets:
+  - skill1
+  - skill2
+  - skill3
+  itemSets:
+  - item1
+  - item2
+  - item3
   pendingDamage: 0
-  DEHandler: {fileID: 0}
---- !u!114 &1600954248
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1600954244}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7a6a3da90afb24e408890562c54a615e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  curState: 0
-  remainingTurns: -1
-  damageSum: 0
-  multiplier: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class DEHandler : MonoBehaviour
+public class DEHandler
 {
    public enum DEState
     {
@@ -41,31 +41,29 @@ public class DEHandler : MonoBehaviour
                 enemy.pendingDamage += damageSum * multiplier;
                 Debug.Log("DE explodes: " + damageSum * multiplier);
                 curState = DEState.Exploding;
-                remainingTurns = -1;
+                remainingTurns -= 1;
                 break;
             case DEState.Exploding:
                 enemy.pendingDamage += damageSum * multiplier;
                 Debug.Log("DE explodes: " + damageSum * multiplier);
-                remainingTurns = -1;
+                remainingTurns -= 1;
                 break;
         }
-
-    }
-
-    private void Update()
-    {
+        if (remainingTurns == -1 && curState == DEState.Exploding)
+        {
+            curState = DEState.Inactive;
+            damageSum = 0f;
+            multiplier = 0f;
+            remainingTurns = -1;
+        }
         if (remainingTurns == 0 && curState == DEState.Active)
         {
             curState = DEState.Exploding;
         }
-        if (remainingTurns == -1 && curState != DEState.Inactive)
-        {
-            Debug.Log("DEHandler reset to Inactive");
-            curState = DEState.Inactive;
-            damageSum = 0f;
-            enemy = null;
-        } 
+
     }
+
+    
 
 
 }

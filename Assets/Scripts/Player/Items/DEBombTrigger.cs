@@ -1,10 +1,9 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DE Bomb Trigger", menuName = "Items/DE Bomb Trigger")]
-public class DEBombTrigger : UserItem
+[CreateAssetMenu(fileName = "DE Bomb Trigger", menuName = "User Items/DE Bomb Trigger")]
+public class DEBombTrigger : PlayerItem
 {
-    public string itemName = "DEBombTrigger";
-    
+     
     public override void Use(Enemy enemy)
     {
        if (enemy.DEHandler == null) {
