@@ -361,19 +361,26 @@ public class BattleManager : MonoBehaviour
 
         //check who's turn 
         if (!playerTurn) //enemy's turn to drinK
-        {
-            enemy.pendingDamage += alcoholDmg;
-            foreach (PlayerItem item in usedItems)
+        {   
+            if (enemy.lastConsent)
             {
-                item.Use(enemy);
+                enemy.pendingDamage += alcoholDmg;
+                foreach (PlayerItem item in usedItems)
+                {
+                    item.Use(enemy);
+                }
             }
             enemy.ApplyDamage();
             Debug.Log("enemy's cap: " + enemy.cap);
         }
         else
         {
+            if (player.lastConsent)
+            {
+                player.cap += alcoholDmg;
+            }
             player.ApplyDamage();
-            //Debug.Log("player's cap: " + player.cap);
+            Debug.Log("player's cap: " + player.cap);
         }
 
         usedItems.Clear();
