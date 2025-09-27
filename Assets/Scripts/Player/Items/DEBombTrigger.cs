@@ -3,6 +3,7 @@ using UnityEngine;
 [CreateAssetMenu(fileName = "DE Bomb Trigger", menuName = "User Items/DE Bomb Trigger")]
 public class DEBombTrigger : PlayerItem
 {
+    public override int priority => 2;
      
     public override void Use(Enemy enemy)
     {
@@ -13,7 +14,7 @@ public class DEBombTrigger : PlayerItem
         {
             if (enemy.DEHandler.curState == DEHandler.DEState.Active)
             {
-                enemy.DEHandler.curState = DEHandler.DEState.Triggered;
+                enemy.DEHandler.bufferState.Add(DEHandler.DEState.Triggered);
             }
             else
             {

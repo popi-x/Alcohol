@@ -2,7 +2,8 @@ using NUnit.Framework;
 using NUnit.Framework.Constraints;
 using UnityEngine;
 using System.Collections.Generic;
-  
+using Unity.VisualScripting;
+
 public enum battleState
     {
         PreRequisites,
@@ -20,8 +21,9 @@ public class BattleManager : MonoBehaviour
     private int alcoholAmount;
     private int maxSkillNum = 3;
     private int curSkillNum = 0;
-    private List<PlayerItem> playerItemSet = new List<PlayerItem>(); //Reset
-    private List<PlayerItem> usedItems = new List<PlayerItem>(); // to store player's used items in a turn;Reset
+    private List<InventorySlot> playerItems;
+    private List<InventorySlot> enemyItems;
+    private List<InventorySlot> usedItems = new List<InventorySlot>();
     private static BattleManager _instance;
     private int turnCnt = 0;
 
@@ -38,8 +40,11 @@ public class BattleManager : MonoBehaviour
 
     public void Reset()
     {
+        playerItems.Clear();
+        enemyItems.Clear();
         usedItems.Clear();
-        playerItemSet.Clear();
+        turnCnt = 0;
+        curSkillNum = 0;
     }
 
 
@@ -59,7 +64,7 @@ public class BattleManager : MonoBehaviour
 
     public void Start()
     {
-        playerItemSet = player.itemSet;
+        playerItems = player.inventory.itemSlots;
     }
 
     private void Update()
@@ -99,53 +104,53 @@ public class BattleManager : MonoBehaviour
                     Debug.Log("Player rolled: " + playerDiceRoll);
                     Debug.Log("Total alcohol damage: " + alcoholAmount);
                     curState = battleState.UseItems;
+                    string msg = !playerTurn ? "Player's turn to use items" : "Enemy's turn to use items";
+                    Debug.Log(msg);
                 }
                 break;
 
             case battleState.UseItems:
-                string msg = !playerTurn ? "Player's turn to use items" : "Enemy's turn to use items";
-                if (Input.GetKeyDown(KeyCode.M))
-                {
-                    Debug.Log(msg);
-                }
-
                 if (!playerTurn)
                 {
-                    if (Input.GetKeyDown(KeyCode.Q))
+                    Dictionary<KeyCode, InventorySlot> itemKeyMap = new Dictionary<KeyCode, InventorySlot>()
                     {
-                        usedItems.Add(playerItemSet[0]);
-                        Debug.Log("Player uses item 1");
-                    }
-                    else if (Input.GetKeyDown(KeyCode.W))
+                        { KeyCode.Alpha1, playerItems[0] },
+                        { KeyCode.Alpha2, playerItems[1] },
+                        { KeyCode.Alpha3, playerItems[2] },
+                        { KeyCode.Alpha4, playerItems[3] },
+                        /*{ KeyCode.Alpha5, playerItems[4] },
+                        { KeyCode.Alpha6, playerItems[5] },
+                        { KeyCode.Alpha7, playerItems[6] },
+                        { KeyCode.Alpha8, playerItems[7] },
+                        { KeyCode.Alpha9, playerItems[8] },
+                        { KeyCode.Alpha0, playerItems[9] },*/
+                    };
+
+                    foreach (var entry in itemKeyMap)
                     {
-                        usedItems.Add(playerItemSet[1]);
-                        Debug.Log("Player uses item 2");
+                        if (Input.GetKeyDown(entry.Key))
+                        {
+                            usedItems.Add(entry.Value);
+                        }
                     }
-                    else if (Input.GetKeyDown(KeyCode.E))
-                    {
-                        usedItems.Add(playerItemSet[2]);
-                        Debug.Log("Player uses item 3");
-                    }
-                    else if (Input.GetKeyDown(KeyCode.N))
+                    
+                    if (Input.GetKeyDown(KeyCode.N))
                     {
                         curState = battleState.UseSkills; // move to next state
+                        Debug.Log("Enemy's turn to use skills");
                     }
                 }
                 else
                 {
                     Debug.Log("Enemy uses item 1");
                    curState = battleState.UseSkills; // move to next state
+                    Debug.Log("Player's turn to use skills");
                 }
+                
                 
                 break;
 
             case battleState.UseSkills:
-                msg = !playerTurn ? "Enemy's turn to use skills" : "Player's turn to use skills";
-                if (Input.GetKeyDown(KeyCode.M))
-                {
-                    Debug.Log(msg);
-                }
-
                 if (playerTurn && curSkillNum != maxSkillNum)
                 {
                     if (Input.GetKeyDown(KeyCode.A))
@@ -166,27 +171,26 @@ public class BattleManager : MonoBehaviour
                     else if (Input.GetKeyDown(KeyCode.N))
                     {
                         curState = battleState.Decision; // move to next state
+                        Debug.Log("Player's turn to make decision");
                     }
                 }
                 else if (playerTurn && curSkillNum == maxSkillNum)
                 {
                     curState = battleState.Decision; // move to next state
+                    Debug.Log ("Player's turn to make decision");
                 }
                 else
                 {
                     UseSkill(1); // enemy uses skill  1 for now
                     Debug.Log("Enemy uses skill 1");
                     curState = battleState.Decision; // move to next state
+                    Debug.Log("Enemy's turn to make decision");
                 }
                 break;
                 
 
             case battleState.Decision:
-                msg = !playerTurn ? "Enemy's turn to decide" : "Player's turn to decide";
-                if (Input.GetKeyDown(KeyCode.M))
-                {
-                    Debug.Log(msg);
-                }
+                
                 if (playerTurn)
                 {
                     if (Input.GetKeyDown(KeyCode.Y))
@@ -365,9 +369,11 @@ public class BattleManager : MonoBehaviour
             if (enemy.lastConsent)
             {
                 enemy.pendingDamage += alcoholDmg;
-                foreach (PlayerItem item in usedItems)
+
+                usedItems.Sort((a, b) => a.item.priority.CompareTo(b.item.priority)); // Sort items by priority (ascending order)
+                foreach (InventorySlot slot in usedItems)
                 {
-                    item.Use(enemy);
+                    slot.UseItem(enemy);
                 }
             }
             enemy.ApplyDamage();

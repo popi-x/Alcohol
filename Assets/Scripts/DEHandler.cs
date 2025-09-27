@@ -1,4 +1,6 @@
+using NUnit.Framework;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class DEHandler
 {
@@ -11,6 +13,7 @@ public class DEHandler
     }
 
     public DEState curState = DEState.Inactive;
+    public List<DEState> bufferState = new List<DEState>();
     public int remainingTurns = -1;
     public float damageSum = 0f;
     public float multiplier = 0f;
@@ -21,10 +24,44 @@ public class DEHandler
         remainingTurns = n; 
         enemy = e;
         multiplier = m;
+        curState = DEState.Active;
     }
 
     public void Execute(bool keepTurn = false) 
-    { 
+    {
+        if (bufferState.Count != 0)
+        {
+            foreach (var state in bufferState)
+            {
+                curState = state;
+                RunState(keepTurn);
+
+            }
+
+            if (!keepTurn)
+                remainingTurns -= 1;
+
+            if (remainingTurns == -1 && curState == DEState.Exploding)
+            {
+                curState = DEState.Inactive;
+                damageSum = 0f;
+                multiplier = 0f;
+                remainingTurns = -1;
+            }
+            if (remainingTurns == 0 && curState == DEState.Active)
+            {
+                curState = DEState.Exploding;
+            }
+        }
+        else
+        {
+            Debug.Log("buffer state is empty.");
+        }
+        
+    }
+
+    private void RunState(bool keepTurn = false)
+    {
         switch (curState)
         {
             case DEState.Inactive:
@@ -33,33 +70,18 @@ public class DEHandler
                 damageSum += enemy.pendingDamage;
                 Debug.Log(damageSum + " damage stored in DEHandler.");
                 enemy.pendingDamage = 0f;
-                if (!keepTurn)
-                    remainingTurns -= 1;
-                // Logic for when the DE is active
                 break;
             case DEState.Triggered:
                 enemy.pendingDamage += damageSum * multiplier;
                 Debug.Log("DE explodes: " + damageSum * multiplier);
                 curState = DEState.Exploding;
-                remainingTurns -= 1;
                 break;
             case DEState.Exploding:
                 enemy.pendingDamage += damageSum * multiplier;
                 Debug.Log("DE explodes: " + damageSum * multiplier);
-                remainingTurns -= 1;
                 break;
         }
-        if (remainingTurns == -1 && curState == DEState.Exploding)
-        {
-            curState = DEState.Inactive;
-            damageSum = 0f;
-            multiplier = 0f;
-            remainingTurns = -1;
-        }
-        if (remainingTurns == 0 && curState == DEState.Active)
-        {
-            curState = DEState.Exploding;
-        }
+
 
     }
 

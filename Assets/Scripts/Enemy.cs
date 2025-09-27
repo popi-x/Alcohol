@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
+using NUnit.Framework.Constraints;
 
 public class Enemy : MonoBehaviour
 {
@@ -9,15 +10,12 @@ public class Enemy : MonoBehaviour
     public float maxCap = 800f;
 
     public bool lastConsent { get; set; } = false;
-    public List<string> skillSets = new List<string>() { "skill1", "skill2", "skill3" }; //temp
-    //Items
-    public List<string> itemSets = new List<string>() { "item1", "item2", "item3" }; //temp 
 
     public float pendingDamage = 0f; //All damage to be applied
 
     //Delayed Effect will start in x turns. First check if it's triggered, and then add turns number from the item after effect is triggered
     public DEHandler DEHandler;
-    public Inventory inventory = new Inventory();
+    public Inventory inventory = new Inventory(5);
 
     //Todo: Battle sequence
     //public void 
@@ -42,7 +40,7 @@ public class Enemy : MonoBehaviour
             }
             else
             {
-                DEHandler.Execute(); //true indicates start of turn call
+                DEHandler.Execute(); 
             }
         }
         Debug.Log("DE turns remaining: " + DEHandler.remainingTurns);
@@ -56,7 +54,7 @@ public class Enemy : MonoBehaviour
         //Delayed Effect executes
         if (DEHandler.curState == DEHandler.DEState.Active)
         {
-            DEHandler.Execute(); 
+            DEHandler.Execute();
         }
         else if (DEHandler.curState == DEHandler.DEState.Triggered)
         {
@@ -67,6 +65,7 @@ public class Enemy : MonoBehaviour
         pendingDamage = 0f;
 
     }
+
 
 
 }
