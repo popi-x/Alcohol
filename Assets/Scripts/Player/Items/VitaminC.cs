@@ -2,7 +2,7 @@ using UnityEngine;
 
 
 
-[CreateAssetMenu(fileName = "Vitamin C", menuName = "User Items/Vitamin C")]
+[CreateAssetMenu(fileName = "Vitamin C", menuName = "Player Items/Vitamin C")]
 public class VitaminC : PlayerItem
 {
      public int icmt = 7;

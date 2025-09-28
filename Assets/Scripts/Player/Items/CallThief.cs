@@ -2,7 +2,7 @@ using NUnit.Framework;
 using UnityEngine;
 using System.Collections.Generic;
 
-[CreateAssetMenu(fileName = "CallThief", menuName = "User Items/CallTheif")]
+[CreateAssetMenu(fileName = "CallThief", menuName = "Player Items/CallTheif")]
 public class CallThief : PlayerItem
 {
     int stolenAmt = 2;

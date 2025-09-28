@@ -490,6 +490,7 @@ MonoBehaviour:
   alcohol: {fileID: 11400000, guid: 58eead1c8bbc56345a62e7fa19bb3ee2, type: 2}
   curState: 0
   playerTurn: 0
+  playerWin: -1
 --- !u!4 &808369574
 Transform:
   m_ObjectHideFlags: 0
@@ -602,10 +603,18 @@ MonoBehaviour:
   cap: 0
   maxCap: 800
   money: 0
-  itemSet:
-  - {fileID: 11400000, guid: c69b1f3826f2cfd419d5bd273b138003, type: 2}
-  - {fileID: 11400000, guid: b62e4de2dcc3a3c4194b5c28881a3801, type: 2}
-  - {fileID: 11400000, guid: d7695ef6a0c218f4381041a1613fd967, type: 2}
+  inventory:
+    itemSlots:
+    - item: {fileID: 11400000, guid: c69b1f3826f2cfd419d5bd273b138003, type: 2}
+      quantity: 4
+    - item: {fileID: 11400000, guid: b62e4de2dcc3a3c4194b5c28881a3801, type: 2}
+      quantity: 4
+    - item: {fileID: 11400000, guid: d7695ef6a0c218f4381041a1613fd967, type: 2}
+      quantity: 4
+    - item: {fileID: 11400000, guid: ca23fb4791a69114399dea34b6e63c97, type: 2}
+      quantity: 4
+  pendingDamage: 0
+  enemyItemInfo: []
 --- !u!1 &1359504254
 GameObject:
   m_ObjectHideFlags: 0
@@ -697,15 +706,17 @@ MonoBehaviour:
   diceRoll: 0
   cap: 0
   maxCap: 1000
-  skillSets:
-  - skill1
-  - skill2
-  - skill3
-  itemSets:
-  - item1
-  - item2
-  - item3
   pendingDamage: 0
+  silentTurns: 0
+  hasGu: 0
+  isConfused: 0
+  inventory:
+    itemSlots:
+    - item: {fileID: 11400000, guid: 5ab3490f002d8244a82a56b6daa2d094, type: 2}
+      quantity: 5
+    - item: {fileID: 11400000, guid: 5ab3490f002d8244a82a56b6daa2d094, type: 2}
+      quantity: 4
+  player: {fileID: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

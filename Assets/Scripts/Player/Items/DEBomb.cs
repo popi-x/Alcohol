@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DE Bomb", menuName = "User Items/DE Bomb")]
+[CreateAssetMenu(fileName = "DE Bomb", menuName = "Player Items/DE Bomb")]
 public class DEBomb : PlayerItem
 {
     public int DETurns = 3; //Starts in 3 turns, i.e. from current turn + 3

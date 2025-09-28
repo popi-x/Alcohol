@@ -10,12 +10,14 @@ public class Player : MonoBehaviour
     public float maxCap = 800f;
     public int money = 0;
     public Inventory inventory = new Inventory(10);
+    public float pendingDamage = 0f;
+    public List<InventorySlot> enemyItemInfo;  
 
     public bool lastConsent { get; set; } = true;
     //Todo:
 
     public void ApplyDamage()
     {
-        return;
+        cap += pendingDamage;
     }
 }

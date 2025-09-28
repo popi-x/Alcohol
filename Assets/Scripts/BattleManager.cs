@@ -35,8 +35,9 @@ public class BattleManager : MonoBehaviour
     // Reference to the alchohol behavior script
     public Alcohol alcohol; 
     public battleState curState;
-    public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
 
+    public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
+    public int playerWin = -1; // 1 means player win, 0 means enemy win, -1 means ongoing battle
 
     public void Reset()
     {
@@ -45,6 +46,7 @@ public class BattleManager : MonoBehaviour
         usedItems.Clear();
         turnCnt = 0;
         curSkillNum = 0;
+        playerWin = -1;
     }
 
 
@@ -83,13 +85,12 @@ public class BattleManager : MonoBehaviour
             case battleState.RollDice:
                 if (Input.GetKeyDown(KeyCode.N))
                 {
+                    //Reset some variables
+                    curSkillNum = 0;
+
                     turnCnt++;
                     Debug.Log("Turn " + turnCnt);
                     //first check if any entity's debuff or buff takes effect at the start of turn
-                    
-                    enemy.ApplyStartOfTurnEffects();
-                    Debug.Log("Enemy's cap after start of turn effects: " + enemy.cap);
-
 
                     Debug.Log("Roll Dice");
                     enemyDiceRoll = RollaDice();
@@ -142,8 +143,8 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    Debug.Log("Enemy uses item 1");
-                   curState = battleState.UseSkills; // move to next state
+                    enemy.UseItem();
+                    curState = battleState.UseSkills;
                     Debug.Log("Player's turn to use skills");
                 }
                 
@@ -181,8 +182,7 @@ public class BattleManager : MonoBehaviour
                 }
                 else
                 {
-                    UseSkill(1); // enemy uses skill  1 for now
-                    Debug.Log("Enemy uses skill 1");
+                    enemy.UseSkill();
                     curState = battleState.Decision; // move to next state
                     Debug.Log("Enemy's turn to make decision");
                 }
@@ -210,7 +210,28 @@ public class BattleManager : MonoBehaviour
                     curState = battleState.Result;
                 }
                     break;
+
             case battleState.Result:
+                if (playerWin == 0)
+                {
+                    Debug.Log("Player lost!");
+                }
+                else if (enemy.cap >= enemy.maxCap)
+                {
+                    Debug.Log("Enemy is drunk! Player wins!");
+                    playerWin = 1;
+                }
+                else if (player.cap >= player.maxCap)
+                {
+                    Debug.Log("Player is drunk! Enemy wins!");
+                    playerWin = 0;
+                }
+                if (playerWin != -1)
+                {
+                    playerWin = -1;
+                    return;
+                }
+                
                 playerTurn = !playerTurn; // switch turn
                 curState = battleState.RollDice;
 
@@ -377,7 +398,9 @@ public class BattleManager : MonoBehaviour
                 }
             }
             enemy.ApplyDamage();
+            player.ApplyDamage();
             Debug.Log("enemy's cap: " + enemy.cap);
+            Debug.Log("player's cap: " + player.cap);
         }
         else
         {
@@ -386,7 +409,9 @@ public class BattleManager : MonoBehaviour
                 player.cap += alcoholDmg;
             }
             player.ApplyDamage();
+            enemy.ApplyDamage();
             Debug.Log("player's cap: " + player.cap);
+            Debug.Log("enemy's cap: " + enemy.cap);
         }
 
         usedItems.Clear();

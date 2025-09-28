@@ -1,6 +1,6 @@
 using UnityEngine;
 
-[CreateAssetMenu(fileName = "DE Bomb Trigger", menuName = "User Items/DE Bomb Trigger")]
+[CreateAssetMenu(fileName = "DE Bomb Trigger", menuName = "Player Items/DE Bomb Trigger")]
 public class DEBombTrigger : PlayerItem
 {
     public override int priority => 2;
