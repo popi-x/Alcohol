@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 57df37a8445750144a3732cab7fcf28b, type: 3}
   m_Name: Silence
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Silence
   enemy: {fileID: 0}
   turns: 2

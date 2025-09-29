@@ -37,6 +37,7 @@ public class BattleManager : MonoBehaviour
     public battleState curState;
 
     public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
+    public bool doubleDrink = false;
     public int playerWin = -1; // 1 means player win, 0 means enemy win, -1 means ongoing battle
 
     public void Reset()
@@ -119,12 +120,12 @@ public class BattleManager : MonoBehaviour
                         { KeyCode.Alpha2, playerItems[1] },
                         { KeyCode.Alpha3, playerItems[2] },
                         { KeyCode.Alpha4, playerItems[3] },
-                        /*{ KeyCode.Alpha5, playerItems[4] },
+                        { KeyCode.Alpha5, playerItems[4] },
                         { KeyCode.Alpha6, playerItems[5] },
                         { KeyCode.Alpha7, playerItems[6] },
                         { KeyCode.Alpha8, playerItems[7] },
                         { KeyCode.Alpha9, playerItems[8] },
-                        { KeyCode.Alpha0, playerItems[9] },*/
+                        //{ KeyCode.Alpha0, playerItems[9] },
                     };
 
                     foreach (var entry in itemKeyMap)
@@ -212,9 +213,13 @@ public class BattleManager : MonoBehaviour
                     break;
 
             case battleState.Result:
+                
+
+
                 if (playerWin == 0)
                 {
                     Debug.Log("Player lost!");
+                    return;
                 }
                 else if (enemy.cap >= enemy.maxCap)
                 {
@@ -396,6 +401,10 @@ public class BattleManager : MonoBehaviour
                 {
                     slot.UseItem(enemy);
                 }
+                if (doubleDrink)
+                {
+                    curState = battleState.UseItems;
+                }
             }
             enemy.ApplyDamage();
             player.ApplyDamage();
@@ -406,13 +415,15 @@ public class BattleManager : MonoBehaviour
         {
             if (player.lastConsent)
             {
-                player.cap += alcoholDmg;
+               player.pendingDamage += alcoholDmg;
             }
             player.ApplyDamage();
             enemy.ApplyDamage();
             Debug.Log("player's cap: " + player.cap);
             Debug.Log("enemy's cap: " + enemy.cap);
         }
+        enemy.pendingDamage = 0;
+        enemy.pendingDamage = 0;
 
         usedItems.Clear();
 

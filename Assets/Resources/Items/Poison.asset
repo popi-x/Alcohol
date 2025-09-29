@@ -12,5 +12,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09c04a5691aef534aa208c0eafc4d75c, type: 3}
   m_Name: Poison
   m_EditorClassIdentifier: 
-  itemName: 
+  itemName: Poison
   enemy: {fileID: 0}

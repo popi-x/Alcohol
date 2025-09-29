@@ -85,10 +85,11 @@ public class Enemy : MonoBehaviour
 
     public void ApplyDamage()
     {
-        if (hasGu)
+        if (hasGu && BattleManager.instance.playerTurn)
         {
-            pendingDamage = 2 * player.pendingDamage;
+            pendingDamage += 2 * player.pendingDamage;
             hasGu = false;
+            Debug.Log("Gu damage is " + pendingDamage);
         }        
 
         if (DEHandler.curState != DEHandler.DEState.Inactive)
@@ -97,7 +98,6 @@ public class Enemy : MonoBehaviour
         }
         Debug.Log("DE turns remaining: " + DEHandler.remainingTurns);
         cap += pendingDamage;
-        pendingDamage = 0f;
 
     }
 

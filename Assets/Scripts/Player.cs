@@ -16,6 +16,17 @@ public class Player : MonoBehaviour
     public bool lastConsent { get; set; } = true;
     //Todo:
 
+    private void Start()
+    {
+        var src = Resources.LoadAll<PlayerItem>("Items");
+        foreach (var item in src)
+        {
+            inventory.AddItem(item, 2);
+        }
+        
+    }
+
+
     public void ApplyDamage()
     {
         cap += pendingDamage;

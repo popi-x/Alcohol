@@ -57,6 +57,12 @@ public class Inventory
                 slot.quantity++;
                 return;
             }
+            if (slot.item == null)
+            {
+                slot.item = item;
+                slot.quantity += n;
+                return;
+            }
         }
         InventorySlot newInv = new InventorySlot(item, n);
         itemSlots.Add(newInv);
