@@ -6,8 +6,9 @@ public class Player : MonoBehaviour
 {
 
     public int diceRoll;
+    public int adrenalineTurn = 2;
     public float cap = 0f;
-    public float maxCap = 800f;
+    public float maxCap = 5f;
     public int money = 0;
     public Inventory inventory = new Inventory(10);
     public float pendingDamage = 0f;
@@ -16,7 +17,7 @@ public class Player : MonoBehaviour
     public List<SkillRuntime> usedSkills = new List<SkillRuntime>();
 
     public bool lastConsent { get; set; } = true;
-    //Todo:
+    public bool hasAdrenaline = false;
 
     private void Start()
     {
@@ -32,6 +33,14 @@ public class Player : MonoBehaviour
             skills.Add(new SkillRuntime(skill));
         }
     }
+    
+    public void ResetBattleState()
+    {
+        adrenalineTurn = 0;
+        hasAdrenaline = false;
+        pendingDamage = 0f;
+    }
+
 
 
     public void ApplyDamage()

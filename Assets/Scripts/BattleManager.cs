@@ -171,6 +171,9 @@ public class BattleManager : MonoBehaviour
                         { KeyCode.Alpha1, 0 },
                         { KeyCode.Alpha2, 1 },
                         { KeyCode.Alpha3, 2 },
+                        { KeyCode.Alpha4, 3 },
+                        /*{ KeyCode.Alpha5, 4 },
+                        { KeyCode.Alpha6, 5 }, */
                     };
 
                     foreach (var entry in skillKeyMap)
@@ -237,33 +240,11 @@ public class BattleManager : MonoBehaviour
                     break;
 
             case battleState.Result:
+
+                Result();
+
                 
-
-
-                if (playerWin == 0)
-                {
-                    Debug.Log("Player lost!");
-                    return;
-                }
-                else if (enemy.cap >= enemy.maxCap)
-                {
-                    Debug.Log("Enemy is drunk! Player wins!");
-                    playerWin = 1;
-                }
-                else if (player.cap >= player.maxCap)
-                {
-                    Debug.Log("Player is drunk! Enemy wins!");
-                    playerWin = 0;
-                }
-                if (playerWin != -1)
-                {
-                    playerWin = -1;
-                    return;
-                }
-                
-                playerTurn = !playerTurn; // switch turn
-                curState = battleState.RollDice;
-
+               
                 break;
             
             default:
@@ -443,10 +424,45 @@ public class BattleManager : MonoBehaviour
             Debug.Log("player's cap: " + player.cap);
             Debug.Log("enemy's cap: " + enemy.cap);
         }
-        enemy.pendingDamage = 0;
-        enemy.pendingDamage = 0;
+        enemy.pendingDamage = 0f;
+        player.pendingDamage = 0f;
 
         usedItems.Clear();
+
+    }
+
+    private void Result()
+    {
+        if (player.hasAdrenaline)
+        {
+            if (player.adrenalineTurn == 0)
+            {
+                Debug.Log("Adrenaline effect has worn off. Player lost!");
+                
+            }
+            player.adrenalineTurn = playerTurn ? player.adrenalineTurn - 1 : player.adrenalineTurn;
+        }
+        else if (playerWin == 0)
+        {
+            Debug.Log("Player lost!");
+        }
+        else if (enemy.cap >= enemy.maxCap)
+        {
+            Debug.Log("Enemy is drunk! Player wins!");
+            playerWin = 1;
+        }
+        else if (player.cap >= player.maxCap)
+        {
+            Debug.Log("Player is drunk! Enemy wins!");
+            playerWin = 0;
+        }
+        if (playerWin != -1)
+        {
+            playerWin = -1;
+        }
+
+        playerTurn = !playerTurn; // switch turn
+        curState = battleState.RollDice;
 
     }
     
