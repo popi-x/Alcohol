@@ -23,7 +23,8 @@ public class BattleManager : MonoBehaviour
     private int curSkillNum = 0;
     private List<InventorySlot> playerItems;
     private List<InventorySlot> enemyItems;
-    private List<InventorySlot> usedItems = new List<InventorySlot>();
+    private List<SkillRuntime> playerSkills;
+    private List<SkillRuntime> enemySkills;
     private static BattleManager _instance;
     private int turnCnt = 0;
 
@@ -35,6 +36,7 @@ public class BattleManager : MonoBehaviour
     // Reference to the alchohol behavior script
     public Alcohol alcohol; 
     public battleState curState;
+    public List<InventorySlot> usedItems { get; private set; } = new List<InventorySlot>();
 
     public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
     public bool doubleDrink = false;
@@ -42,7 +44,6 @@ public class BattleManager : MonoBehaviour
 
     public void Reset()
     {
-        playerItems.Clear();
         enemyItems.Clear();
         usedItems.Clear();
         turnCnt = 0;
@@ -68,6 +69,9 @@ public class BattleManager : MonoBehaviour
     public void Start()
     {
         playerItems = player.inventory.itemSlots;
+        playerSkills = player.skills;
+        enemyItems = enemy.inventory.itemSlots;
+        enemySkills = enemy.skills;
     }
 
     private void Update()
@@ -125,7 +129,7 @@ public class BattleManager : MonoBehaviour
                         { KeyCode.Alpha7, playerItems[6] },
                         { KeyCode.Alpha8, playerItems[7] },
                         { KeyCode.Alpha9, playerItems[8] },
-                        //{ KeyCode.Alpha0, playerItems[9] },
+                        { KeyCode.Alpha0, playerItems[9] },
                     };
 
                     foreach (var entry in itemKeyMap)
@@ -146,6 +150,13 @@ public class BattleManager : MonoBehaviour
                 {
                     enemy.UseItem();
                     curState = battleState.UseSkills;
+                    if (player.enemyItemInfo.Count > 0)
+                    {
+                        foreach (var slot in player.enemyItemInfo)
+                        {
+                            Debug.Log("Enemy has "+ slot.quantity + ' ' + slot.item.itemName);
+                        }
+                    }
                     Debug.Log("Player's turn to use skills");
                 }
                 
@@ -155,23 +166,25 @@ public class BattleManager : MonoBehaviour
             case battleState.UseSkills:
                 if (playerTurn && curSkillNum != maxSkillNum)
                 {
-                    if (Input.GetKeyDown(KeyCode.A))
+                    Dictionary<KeyCode, int> skillKeyMap = new Dictionary<KeyCode, int>()
                     {
-                        UseSkill(1);
-                        curSkillNum++;
+                        { KeyCode.Alpha1, 0 },
+                        { KeyCode.Alpha2, 1 },
+                        { KeyCode.Alpha3, 2 },
+                    };
+
+                    foreach (var entry in skillKeyMap)
+                    {
+                        if (Input.GetKeyDown(entry.Key))
+                        {
+                            playerSkills[entry.Value].Use();
+                            player.usedSkills.Add(player.skills[entry.Value]);
+                        }
                     }
-                    else if (Input.GetKeyDown(KeyCode.S))
+
+                    if (Input.GetKeyDown(KeyCode.N))
                     {
-                        UseSkill(2);
-                        curSkillNum++;
-                    }
-                    else if (Input.GetKeyDown(KeyCode.D))
-                    {
-                        UseSkill(3);
-                        curSkillNum++;
-                    }
-                    else if (Input.GetKeyDown(KeyCode.N))
-                    {
+                        player.UpdateSkillCoolDown();
                         curState = battleState.Decision; // move to next state
                         Debug.Log("Player's turn to make decision");
                     }
@@ -184,6 +197,7 @@ public class BattleManager : MonoBehaviour
                 else
                 {
                     enemy.UseSkill();
+                    enemy.UpdateSkillCoolDown();
                     curState = battleState.Decision; // move to next state
                     Debug.Log("Enemy's turn to make decision");
                 }
@@ -208,7 +222,17 @@ public class BattleManager : MonoBehaviour
                 else
                 {
                     MakeADecision(true);
-                    curState = battleState.Result;
+                    if (doubleDrink)
+                    {
+                        curState = battleState.UseItems;
+                        Debug.Log("Enemy gets to drink again!");
+                        Debug.Log("Player's turn to use items");
+                        doubleDrink = false;
+                    }
+                    else
+                    {
+                        curState = battleState.Result;
+                    }
                 }
                     break;
 
@@ -401,10 +425,7 @@ public class BattleManager : MonoBehaviour
                 {
                     slot.UseItem(enemy);
                 }
-                if (doubleDrink)
-                {
-                    curState = battleState.UseItems;
-                }
+                
             }
             enemy.ApplyDamage();
             player.ApplyDamage();

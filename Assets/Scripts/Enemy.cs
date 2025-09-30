@@ -19,6 +19,7 @@ public class Enemy : MonoBehaviour
     public DEHandler DEHandler;
     public Inventory inventory = new Inventory(5);
     public Player player;
+    public List<SkillRuntime> skills = new List<SkillRuntime>();
     
     //Todo: Battle sequence
     //public void 
@@ -27,6 +28,7 @@ public class Enemy : MonoBehaviour
     {
         DEHandler = new DEHandler();
     }
+
 
     public void UseItem()
     {
@@ -99,6 +101,14 @@ public class Enemy : MonoBehaviour
         Debug.Log("DE turns remaining: " + DEHandler.remainingTurns);
         cap += pendingDamage;
 
+    }
+
+    public void UpdateSkillCoolDown()
+    {
+        foreach (var skill in skills)
+        {
+           skill.UpdateCoolDown();
+        }
     }
 
 
