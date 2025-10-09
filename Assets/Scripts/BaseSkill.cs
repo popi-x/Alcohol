@@ -13,5 +13,5 @@ public abstract class BaseSkill : ScriptableObject
     public string skillName;
     public int coolDown;
     public skillType type;
-    public abstract void Use();
+    public abstract void Use(params Object[] entities);
 }

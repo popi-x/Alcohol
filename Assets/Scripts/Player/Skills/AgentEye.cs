@@ -4,7 +4,7 @@ using System.Collections.Generic;
 [CreateAssetMenu(fileName = "AgentEye", menuName = "Skills/Player/AgentEye")]
 public class AgentEye: BaseSkill
 {
-    public override void Use()
+    public override void Use(params Object[] entities)
     {
         List<InventorySlot> enemyUsedItem = BattleManager.instance.usedItems;
         foreach (InventorySlot slot in enemyUsedItem)

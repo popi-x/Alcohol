@@ -20,6 +20,7 @@ public class SkillRuntime
         if (canUse)
         {
             skill.Use();
+            Debug.Log($"Used skill: {skill.skillName}");
             remainingCoolDown = skill.coolDown;
         }
         else

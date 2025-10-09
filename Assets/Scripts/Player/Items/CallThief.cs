@@ -6,6 +6,7 @@ using System.Collections.Generic;
 public class CallThief : PlayerItem
 {
     int stolenAmt = 2;
+    int upgradeAmt = 3;
 
     public override void Use(Enemy enemy)
     {
@@ -27,5 +28,11 @@ public class CallThief : PlayerItem
                 }
             }
         }        
+    }
+
+    public override void Upgrade()
+    {
+        stolenAmt = upgradeAmt;
+        base.Upgrade();
     }
 }

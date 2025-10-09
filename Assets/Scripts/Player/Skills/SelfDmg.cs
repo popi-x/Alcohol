@@ -6,7 +6,7 @@ public class SelfDmg: BaseSkill
 {
     public float dmgAmt = 20;
 
-    public override void Use()
+    public override void Use(params Object[] entities)
     {
         Player player = GameObject.FindFirstObjectByType<Player>();
         player.pendingDamage += dmgAmt;

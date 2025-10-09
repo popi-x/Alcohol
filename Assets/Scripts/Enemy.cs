@@ -5,11 +5,13 @@ using NUnit.Framework.Constraints;
 public class Enemy : MonoBehaviour
 {
     //激进程度int
-    public int diceRoll;
     public float cap = 0f;
     public float maxCap = 800f;
     public float pendingDamage = 0f; //All damage to be applied
+    public float confusionProb = 0.5f;
     public int silentTurns = 0;
+    public int guMtpler = 2;
+    public int diceRoll;
     public bool lastConsent { get; set; } = false;
     public bool hasGu = false;
     public bool isConfused = false;
@@ -32,7 +34,7 @@ public class Enemy : MonoBehaviour
 
     public void UseItem()
     {
-        if (isConfused && Random.value < 0.5f)
+        if (isConfused && Random.value < confusionProb)
         {
             //50% chance to use a random item
             if (inventory.itemSlots.Count > 0)
@@ -89,7 +91,7 @@ public class Enemy : MonoBehaviour
     {
         if (hasGu && BattleManager.instance.playerTurn)
         {
-            pendingDamage += 2 * player.pendingDamage;
+            pendingDamage += guMtpler * player.pendingDamage;
             hasGu = false;
             Debug.Log("Gu damage is " + pendingDamage);
         }        
