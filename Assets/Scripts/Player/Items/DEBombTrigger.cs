@@ -4,7 +4,7 @@ using UnityEngine;
 public class DEBombTrigger : PlayerItem
 {
     public override int priority => 2;
-     
+
     public override void Use(Enemy enemy)
     {
        if (enemy.DEHandler == null) {
@@ -22,6 +22,19 @@ public class DEBombTrigger : PlayerItem
             }
         }
 
+    }
+
+    public override void Upgrade()
+    {
+        if (enemy.DEHandler == null)
+        {
+            Debug.LogError("Enemy does not have a DEHandler component.");
+        }
+        else
+        {
+            enemy.DEHandler.triggerIsUpgraded = true;
+        }
+        base.Upgrade();
     }
     
 

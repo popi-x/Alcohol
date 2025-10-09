@@ -17,6 +17,8 @@ public class DEHandler
     public int remainingTurns = -1;
     public float damageSum = 0f;
     public float multiplier = 0f;
+    public float triggerMtpler = 0f;
+    public bool triggerIsUpgraded = false;
     Enemy enemy;
 
     public void Init(Enemy e, int n, float m) 
@@ -24,6 +26,8 @@ public class DEHandler
         remainingTurns = n; 
         enemy = e;
         multiplier = m;
+        if (triggerIsUpgraded) triggerMtpler = multiplier + 1;
+        else triggerMtpler = multiplier;
         curState = DEState.Active;
     }
 
@@ -72,8 +76,8 @@ public class DEHandler
                 enemy.pendingDamage = 0f;
                 break;
             case DEState.Triggered:
-                enemy.pendingDamage += damageSum * multiplier;
-                Debug.Log("DE explodes: " + damageSum * multiplier);
+                enemy.pendingDamage += damageSum * triggerMtpler; 
+                Debug.Log("DE explodes: " + damageSum * triggerMtpler);
                 curState = DEState.Exploding;
                 break;
             case DEState.Exploding:

@@ -40,6 +40,7 @@ public class BattleManager : MonoBehaviour
 
     public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
     public bool doubleDrink = false;
+    public bool reverse = false; //enemy drinks in this turn instead of player
     public int playerWin = -1; // 1 means player win, 0 means enemy win, -1 means ongoing battle
 
     public void Reset()
@@ -345,6 +346,14 @@ public class BattleManager : MonoBehaviour
             
             if (decision)
             {
+                if (reverse)
+                {
+                    usedItems.Clear(); //clear the used items since they won't be applied to enemy
+                    player.lastConsent = true;
+                    Debug.Log("Reverse effect activated! Enemy must drink instead of player.");
+                    CalculateDamageResult();
+                    return;
+                }
                 player.lastConsent = true;
                 Debug.Log("Player chooses to drink");
                 CalculateDamageResult();
@@ -357,7 +366,11 @@ public class BattleManager : MonoBehaviour
                     player.lastConsent = true;
                     CalculateDamageResult();
                 }
-                Debug.Log("Player chooses not to drink");
+                else
+                {
+                    player.lastConsent = false;
+                    Debug.Log("Player chooses not to drink");
+                }
             } 
         }
         else
@@ -417,7 +430,12 @@ public class BattleManager : MonoBehaviour
         {
             if (player.lastConsent)
             {
-               player.pendingDamage += alcoholDmg;
+                if (reverse)
+                {
+                    enemy.pendingDamage += alcoholDmg;
+                    reverse = false;
+                }
+                else player.pendingDamage += alcoholDmg;
             }
             player.ApplyDamage();
             enemy.ApplyDamage();
@@ -433,7 +451,7 @@ public class BattleManager : MonoBehaviour
 
     private void Result()
     {
-        if (player.hasAdrenaline)
+        if (playerTurn && player.hasAdrenaline)
         {
             if (player.adrenalineTurn == 0)
             {

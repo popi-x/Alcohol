@@ -5,6 +5,7 @@ public class DEBomb : PlayerItem
 {
     public int DETurns = 3; //Starts in 3 turns, i.e. from current turn + 3
     public int DEMtpler = 3;
+    public int upgradeMtpler = 4;
     public override int priority => 1;
 
     public override void Use(Enemy enemy)
@@ -25,5 +26,11 @@ public class DEBomb : PlayerItem
             }
         }
 
-    } 
+    }
+
+    public override void Upgrade()
+    {
+        DEMtpler = upgradeMtpler;
+        base.Upgrade();
+    }
 }
