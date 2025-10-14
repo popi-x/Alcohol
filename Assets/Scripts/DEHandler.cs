@@ -33,6 +33,7 @@ public class DEHandler
 
     public void Execute(bool keepTurn = false) 
     {
+        //Debug.Log("Current state:" + curState);
         if (bufferState.Count != 0)
         {
             foreach (var state in bufferState)
@@ -41,26 +42,28 @@ public class DEHandler
                 RunState(keepTurn);
 
             }
-
-            if (!keepTurn)
-                remainingTurns -= 1;
-
-            if (remainingTurns == -1 && curState == DEState.Exploding)
-            {
-                curState = DEState.Inactive;
-                damageSum = 0f;
-                multiplier = 0f;
-                remainingTurns = -1;
-            }
-            if (remainingTurns == 0 && curState == DEState.Active)
-            {
-                curState = DEState.Exploding;
-            }
         }
         else
         {
-            Debug.Log("buffer state is empty.");
+            RunState(keepTurn);
         }
+
+        if (!keepTurn)
+            remainingTurns -= 1;
+
+        if (remainingTurns == -1 && curState == DEState.Exploding)
+        {
+            curState = DEState.Inactive;
+            damageSum = 0f;
+            multiplier = 0f;
+            remainingTurns = -1;
+        }
+        if (remainingTurns == 0 && curState == DEState.Active)
+        {
+            curState = DEState.Exploding;
+        }
+
+        bufferState.Clear();
         
     }
 
