@@ -14,5 +14,5 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   skillName: 
   coolDown: 0
-  type: 0
+  type: 2
   dmgAmt: 20

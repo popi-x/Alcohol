@@ -13,6 +13,6 @@ MonoBehaviour:
   m_Name: Adrenaline
   m_EditorClassIdentifier: 
   skillName: Adrenaline
-  coolDown: 2
-  type: 0
+  coolDown: 5
+  type: 1
   adrenalineTurn: 1

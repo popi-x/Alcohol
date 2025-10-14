@@ -183,6 +183,7 @@ public class BattleManager : MonoBehaviour
                         {
                             playerSkills[entry.Value].Use();
                             player.usedSkills.Add(player.skills[entry.Value]);
+                            curSkillNum++;
                         }
                     }
 
