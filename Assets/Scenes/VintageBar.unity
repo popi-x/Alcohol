@@ -2439,7 +2439,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 1674062072928472465, guid: 00f8db70a549b7b46963a6d7484c0a8b, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -4.491
+      value: -5.381
       objectReference: {fileID: 0}
     - target: {fileID: 1674062072928472465, guid: 00f8db70a549b7b46963a6d7484c0a8b, type: 3}
       propertyPath: m_LocalRotation.w
@@ -22692,13 +22692,13 @@ CharacterController:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Height: 1.7
-  m_Radius: 0.25
-  m_SlopeLimit: 45
-  m_StepOffset: 0.01
-  m_SkinWidth: 0.05
+  m_Height: 1.73
+  m_Radius: 0.32
+  m_SlopeLimit: 44.99
+  m_StepOffset: 0.1
+  m_SkinWidth: 0.08
   m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 1.12, z: 0}
+  m_Center: {x: 0, y: 1.06, z: 0}
 --- !u!1001 &1420355898
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -33083,6 +33083,30 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1893166793}
     m_Modifications:
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Size.x
+      value: 6.4399996
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Size.z
+      value: 2.1059022
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Center.x
+      value: -1.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Center.y
+      value: 1.6599998
+      objectReference: {fileID: 0}
+    - target: {fileID: 1938552105953515023, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
+      propertyPath: m_Center.z
+      value: -1.2770488
+      objectReference: {fileID: 0}
     - target: {fileID: 2247117807657777266, guid: 533d4b06e5c44314aa7a7d181febe896, type: 3}
       propertyPath: m_StaticEditorFlags
       value: 2147483647
