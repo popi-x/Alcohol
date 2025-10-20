@@ -46,12 +46,19 @@ public class PlayerController : MonoBehaviour
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
         if (Physics.Raycast(ray, out RaycastHit hit, groundLayer))
         {
+            Debug.Log("Hit point: " + hit.point);
             if (NavMesh.SamplePosition(hit.point, out NavMeshHit navMeshHit, sampleDistance, NavMesh.AllAreas))
             {
-                agent .SetDestination(navMeshHit.position);
+                agent.SetDestination(navMeshHit.position);
                 OnGroundTouch?.Invoke(navMeshHit.position);
             }
         }
+    }
+
+    private void Update()
+    {
+        float normalizedSpeed = Mathf.InverseLerp(0, agent.speed, agent.velocity.magnitude);
+        animator.SetFloat("Speed", normalizedSpeed);
     }
 
 
