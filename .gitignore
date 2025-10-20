@@ -74,4 +74,8 @@ crashlytics-build.properties
 /[Aa]ssets/[Ss]treamingAssets/aa.meta
 /[Aa]ssets/[Ss]treamingAssets/aa/*
 
+#ignore NavMesh data 
+Assets/**/NavMesh-NavMeshRoot.asset
+Assets/**/NavMesh-NavMeshRoot.asset.meta
+
 # End of https://www.toptal.com/developers/gitignore/api/unity
