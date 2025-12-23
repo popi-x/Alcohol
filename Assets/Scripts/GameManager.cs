@@ -5,11 +5,13 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
     public enum GameState
     {
-        Dialogue,
+        Idle,
+        PreDialogue,
         Battle,
+        PostDialogue,
         Shop
     }
-    public GameState curState { get; } = GameState.Battle;
+    public GameState curState { get; set; } = GameState.Idle;
     public void Awake()
     {
         if (instance == null)
@@ -23,5 +25,10 @@ public class GameManager : MonoBehaviour
         
     }
 
-   
+    public void Update()
+    {
+        
+    }
+
+
 }
