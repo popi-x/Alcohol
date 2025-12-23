@@ -3,13 +3,16 @@ using UnityEngine.InputSystem;
 using System.Collections;
 using UnityEngine.AI;
 
-public class PlayerController : MonoBehaviour
+public class WalkController : MonoBehaviour
 {
+    public static WalkController instance { get; private set; }
+
     [Header("Movement Settings")]
     public float moveSpeed = 5f;
     public Camera cam;
     public static event System.Action<Vector3> OnGroundTouch;
 
+    
     private Animator animator;
     private Vector3 inputDir;
     private NavMeshAgent agent;
@@ -18,6 +21,19 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private InputAction mouseClickAction;
     [SerializeField] private LayerMask groundLayer;  
     [SerializeField] private float sampleDistance = 0.5f;
+
+    void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
 
     // Start is called once before the first execution of Update after the MonoBehaviour is created
@@ -44,11 +60,11 @@ public class PlayerController : MonoBehaviour
     public void Move(InputAction.CallbackContext context)
     {
         Ray ray = cam.ScreenPointToRay(Mouse.current.position.ReadValue());
-        if (Physics.Raycast(ray, out RaycastHit hit, groundLayer))
+        if (Physics.Raycast(ray, out RaycastHit hit, Mathf.Infinity, groundLayer))
         {
-            Debug.Log("Hit point: " + hit.point);
             if (NavMesh.SamplePosition(hit.point, out NavMeshHit navMeshHit, sampleDistance, NavMesh.AllAreas))
             {
+                Debug.Log("Moving to: " + navMeshHit.position);
                 agent.SetDestination(navMeshHit.position);
                 OnGroundTouch?.Invoke(navMeshHit.position);
             }

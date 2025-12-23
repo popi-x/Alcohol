@@ -6,7 +6,7 @@ public class Enemy : MonoBehaviour
 {
     //激进程度int
     public float cap = 0f;
-    public float maxCap = 800f;
+    public float maxCap = 120f;
     public float pendingDamage = 0f; //All damage to be applied
     public float confusionProb = 0.5f;
     public int silentTurns = 0;
@@ -29,6 +29,11 @@ public class Enemy : MonoBehaviour
     public void Awake()
     {
         DEHandler = new DEHandler();
+    }
+
+    public void Start()
+    {
+        player = Player.instance;
     }
 
 

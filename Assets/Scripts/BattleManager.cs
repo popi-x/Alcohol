@@ -3,6 +3,8 @@ using NUnit.Framework.Constraints;
 using UnityEngine;
 using System.Collections.Generic;
 using Unity.VisualScripting;
+using static GameManager;
+using UnityEngine.AI;
 
 public enum battleState
     {
@@ -33,9 +35,16 @@ public class BattleManager : MonoBehaviour
 
     public Enemy enemy; // Reference to the enemy behavior script
     public Player player; // Reference to the player behavior script
+
     // Reference to the alchohol behavior script
     public Alcohol alcohol; 
     public battleState curState;
+    public Transform enemyPos;
+    public Transform enemyOrigPos;
+    public Transform playerPos;
+    public Transform playerOrigPos;
+
+
     public List<InventorySlot> usedItems { get; private set; } = new List<InventorySlot>();
 
     public bool playerTurn = false; // player turn means player's turn to drink, i.e. enemy uses item/skill. Enemy is always the first to drink.
@@ -69,57 +78,56 @@ public class BattleManager : MonoBehaviour
 
     public void Start()
     {
-        playerItems = player.inventory.itemSlots;
-        playerSkills = player.skills;
-        enemyItems = enemy.inventory.itemSlots;
-        enemySkills = enemy.skills;
+        
+        
+        
     }
 
     private void Update()
     {
-        
-
-        switch (curState)
+        if (GameManager.instance.curState == GameState.Battle)
         {
-            case battleState.PreRequisites:
-                if (Input.GetKeyDown(KeyCode.N))
-                {
-                    Debug.Log("Check Prerequisites");
-                    CheckPrerequisite();
-                }
-                break;
-            case battleState.RollDice:
-                if (Input.GetKeyDown(KeyCode.N))
-                {
-                    //Reset some variables
-                    curSkillNum = 0;
+            switch (curState)
+            {
+                case battleState.PreRequisites:
+                    if (Input.GetKeyDown(KeyCode.N))
+                    {
+                        Debug.Log("Check Prerequisites");
+                        CheckPrerequisite();
+                    }
+                    break;
+                case battleState.RollDice:
+                    if (Input.GetKeyDown(KeyCode.N))
+                    {
+                        //Reset some variables
+                        curSkillNum = 0;
 
-                    turnCnt++;
-                    Debug.Log("Turn " + turnCnt);
-                    //first check if any entity's debuff or buff takes effect at the start of turn
+                        turnCnt++;
+                        Debug.Log("Turn " + turnCnt);
+                        //first check if any entity's debuff or buff takes effect at the start of turn
 
-                    Debug.Log("Roll Dice");
-                    enemyDiceRoll = RollaDice();
-                    enemy.diceRoll = enemyDiceRoll;
+                        Debug.Log("Roll Dice");
+                        enemyDiceRoll = RollaDice();
+                        enemy.diceRoll = enemyDiceRoll;
 
-                    playerDiceRoll = RollaDice();
-                    player.diceRoll = playerDiceRoll;
+                        playerDiceRoll = RollaDice();
+                        player.diceRoll = playerDiceRoll;
 
-                    SumUpDiceResult();
+                        SumUpDiceResult();
 
-                    Debug.Log("Enemy rolled: " + enemyDiceRoll);
-                    Debug.Log("Player rolled: " + playerDiceRoll);
-                    Debug.Log("Total alcohol damage: " + alcoholAmount);
-                    curState = battleState.UseItems;
-                    string msg = !playerTurn ? "Player's turn to use items" : "Enemy's turn to use items";
-                    Debug.Log(msg);
-                }
-                break;
+                        Debug.Log("Enemy rolled: " + enemyDiceRoll);
+                        Debug.Log("Player rolled: " + playerDiceRoll);
+                        Debug.Log("Total alcohol damage: " + alcoholAmount);
+                        curState = battleState.UseItems;
+                        string msg = !playerTurn ? "Player's turn to use items" : "Enemy's turn to use items";
+                        Debug.Log(msg);
+                    }
+                    break;
 
-            case battleState.UseItems:
-                if (!playerTurn)
-                {
-                    Dictionary<KeyCode, InventorySlot> itemKeyMap = new Dictionary<KeyCode, InventorySlot>()
+                case battleState.UseItems:
+                    if (!playerTurn)
+                    {
+                        Dictionary<KeyCode, InventorySlot> itemKeyMap = new Dictionary<KeyCode, InventorySlot>()
                     {
                         { KeyCode.Alpha1, playerItems[0] },
                         { KeyCode.Alpha2, playerItems[1] },
@@ -133,41 +141,41 @@ public class BattleManager : MonoBehaviour
                         { KeyCode.Alpha0, playerItems[9] },
                     };
 
-                    foreach (var entry in itemKeyMap)
-                    {
-                        if (Input.GetKeyDown(entry.Key))
+                        foreach (var entry in itemKeyMap)
                         {
-                            usedItems.Add(entry.Value);
+                            if (Input.GetKeyDown(entry.Key))
+                            {
+                                usedItems.Add(entry.Value);
+                            }
                         }
-                    }
-                    
-                    if (Input.GetKeyDown(KeyCode.N))
-                    {
-                        curState = battleState.UseSkills; // move to next state
-                        Debug.Log("Enemy's turn to use skills");
-                    }
-                }
-                else
-                {
-                    enemy.UseItem();
-                    curState = battleState.UseSkills;
-                    if (player.enemyItemInfo.Count > 0)
-                    {
-                        foreach (var slot in player.enemyItemInfo)
-                        {
-                            Debug.Log("Enemy has "+ slot.quantity + ' ' + slot.item.itemName);
-                        }
-                    }
-                    Debug.Log("Player's turn to use skills");
-                }
-                
-                
-                break;
 
-            case battleState.UseSkills:
-                if (playerTurn && curSkillNum != maxSkillNum)
-                {
-                    Dictionary<KeyCode, int> skillKeyMap = new Dictionary<KeyCode, int>()
+                        if (Input.GetKeyDown(KeyCode.N))
+                        {
+                            curState = battleState.UseSkills; // move to next state
+                            Debug.Log("Enemy's turn to use skills");
+                        }
+                    }
+                    else
+                    {
+                        enemy.UseItem();
+                        curState = battleState.UseSkills;
+                        if (player.enemyItemInfo.Count > 0)
+                        {
+                            foreach (var slot in player.enemyItemInfo)
+                            {
+                                Debug.Log("Enemy has " + slot.quantity + ' ' + slot.item.itemName);
+                            }
+                        }
+                        Debug.Log("Player's turn to use skills");
+                    }
+
+
+                    break;
+
+                case battleState.UseSkills:
+                    if (playerTurn && curSkillNum != maxSkillNum)
+                    {
+                        Dictionary<KeyCode, int> skillKeyMap = new Dictionary<KeyCode, int>()
                     {
                         { KeyCode.Alpha1, 0 },
                         { KeyCode.Alpha2, 1 },
@@ -177,80 +185,81 @@ public class BattleManager : MonoBehaviour
                         { KeyCode.Alpha6, 5 }, */
                     };
 
-                    foreach (var entry in skillKeyMap)
-                    {
-                        if (Input.GetKeyDown(entry.Key))
+                        foreach (var entry in skillKeyMap)
                         {
-                            playerSkills[entry.Value].Use();
-                            player.usedSkills.Add(player.skills[entry.Value]);
-                            curSkillNum++;
+                            if (Input.GetKeyDown(entry.Key))
+                            {
+                                playerSkills[entry.Value].Use();
+                                player.usedSkills.Add(player.skills[entry.Value]);
+                                curSkillNum++;
+                            }
+                        }
+
+                        if (Input.GetKeyDown(KeyCode.N))
+                        {
+                            player.UpdateSkillCoolDown();
+                            curState = battleState.Decision; // move to next state
+                            Debug.Log("Player's turn to make decision");
                         }
                     }
-
-                    if (Input.GetKeyDown(KeyCode.N))
+                    else if (playerTurn && curSkillNum == maxSkillNum)
                     {
-                        player.UpdateSkillCoolDown();
                         curState = battleState.Decision; // move to next state
                         Debug.Log("Player's turn to make decision");
                     }
-                }
-                else if (playerTurn && curSkillNum == maxSkillNum)
-                {
-                    curState = battleState.Decision; // move to next state
-                    Debug.Log ("Player's turn to make decision");
-                }
-                else
-                {
-                    enemy.UseSkill();
-                    enemy.UpdateSkillCoolDown();
-                    curState = battleState.Decision; // move to next state
-                    Debug.Log("Enemy's turn to make decision");
-                }
-                break;
-                
+                    else
+                    {
+                        enemy.UseSkill();
+                        enemy.UpdateSkillCoolDown();
+                        curState = battleState.Decision; // move to next state
+                        Debug.Log("Enemy's turn to make decision");
+                    }
+                    break;
 
-            case battleState.Decision:
-                
-                if (playerTurn)
-                {
-                    if (Input.GetKeyDown(KeyCode.Y))
+
+                case battleState.Decision:
+
+                    if (playerTurn)
                     {
-                        MakeADecision(true);
-                        curState = battleState.Result;
-                    }
-                    else if (Input.GetKeyDown(KeyCode.N))
-                    {
-                        MakeADecision(false);
-                        curState = battleState.Result;
-                    }
-                }
-                else
-                {
-                    MakeADecision(true);
-                    if (doubleDrink)
-                    {
-                        curState = battleState.UseItems;
-                        Debug.Log("Enemy gets to drink again!");
-                        Debug.Log("Player's turn to use items");
-                        doubleDrink = false;
+                        if (Input.GetKeyDown(KeyCode.Y))
+                        {
+                            MakeADecision(true);
+                            curState = battleState.Result;
+                        }
+                        else if (Input.GetKeyDown(KeyCode.N))
+                        {
+                            MakeADecision(false);
+                            curState = battleState.Result;
+                        }
                     }
                     else
                     {
-                        curState = battleState.Result;
+                        MakeADecision(true);
+                        if (doubleDrink)
+                        {
+                            curState = battleState.UseItems;
+                            Debug.Log("Enemy gets to drink again!");
+                            Debug.Log("Player's turn to use items");
+                            doubleDrink = false;
+                        }
+                        else
+                        {
+                            curState = battleState.Result;
+                        }
                     }
-                }
                     break;
 
-            case battleState.Result:
+                case battleState.Result:
 
-                Result();
+                    Result();
 
-                
-               
-                break;
-            
-            default:
-                break;
+
+
+                    break;
+
+                default:
+                    break;
+            }
         }
     }
 
@@ -315,6 +324,19 @@ public class BattleManager : MonoBehaviour
         // check if player has something enemy needs
         // tips - change state
         curState = battleState.RollDice;
+        enemyOrigPos = enemy.transform;
+        playerOrigPos = player.transform;
+        enemy.transform.position = enemyPos.position;
+        enemy.transform.rotation = enemyPos.rotation;
+        Debug.Log("Enemy rotation: " + enemy.transform.rotation);
+        player.GetComponent<NavMeshAgent>().enabled = false;
+        WalkController.instance.enabled = false;
+        player.transform.position = playerPos.position;
+        player.transform.rotation = playerPos.rotation;
+        playerItems = player.inventory.itemSlots;
+        playerSkills = player.skills;
+        enemyItems = enemy.inventory.itemSlots;
+        enemySkills = enemy.skills;
     }
 
     int RollaDice()
@@ -477,7 +499,13 @@ public class BattleManager : MonoBehaviour
         }
         if (playerWin != -1)
         {
-            playerWin = -1;
+            player.transform.position  = playerOrigPos.position;
+            player.transform.rotation = playerOrigPos.rotation;
+            enemy.transform.position = enemyOrigPos.position;
+            player.transform.rotation = enemyOrigPos.rotation;
+            player.GetComponent<NavMeshAgent>().enabled = true;
+            WalkController.instance.enabled = true;
+            GameManager.instance.curState = GameState.PostDialogue;
         }
 
         playerTurn = !playerTurn; // switch turn

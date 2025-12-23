@@ -4,7 +4,7 @@ using System;
 
 public class Player : MonoBehaviour
 {
-
+    public static Player instance { get; private set; }
     public int diceRoll;
     public int adrenalineTurn = 2;
     public float cap = 0f;
@@ -19,6 +19,23 @@ public class Player : MonoBehaviour
     public bool lastConsent { get; set; } = true;
     public bool hasAdrenaline = false;
 
+    private WalkController walkController;
+    private DialogueController dialogueController;
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
+
+
     private void Start()
     {
         var src = Resources.LoadAll<PlayerItem>("Items");
@@ -32,8 +49,16 @@ public class Player : MonoBehaviour
         {
             skills.Add(new SkillRuntime(skill));
         }
+
+        walkController = GetComponent<WalkController>();
+        dialogueController = GetComponent<DialogueController>();
     }
-    
+
+    private void Update()
+    {
+        
+    }
+
     public void ResetBattleState()
     {
         adrenalineTurn = 0;
